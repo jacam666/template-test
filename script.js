@@ -3,6 +3,20 @@ const quoteText = document.getElementById('quote-text');
 const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
+const loader = document.getElementById('loader')
+
+
+function showLoadingSpinner() {
+    loader.hidden = false;
+    quoteContainer.hidden = true;
+}
+
+function removeLoadingSpinner() {
+    if (!loader.hidden) {
+        quoteContainer.hidden = false;
+        loader.hidden = true;
+    }
+}
 
 let apiQuotes = [];
 
@@ -18,26 +32,19 @@ function newQuote() {
     }
     const quoteSpan = document.querySelector('.quote');
     quoteSpan.textContent = quote.text;
-    // // get quote length to determine styling
-    // if (quote.text.length > 150) {
-    //     quoteText.classList.add('long-quote')
-    // } else {
-    //     quoteText.classList.remove('long-quote')
-    // }
-
-    // quoteText.textContent = quote.text;
 }
 //Get Quotes from API
 async function GetQuotes() {
+    showLoadingSpinner();
     const apiUrl = 'https://jacintodesign.github.io/quotes-api/data/quotes.json';
     try {
         const response = await fetch(apiUrl);
         apiQuotes = await response.json();
         newQuote();
+        removeLoadingSpinner();
     } catch (error) {
         // catch error here
-        console.error('Error in newQuote:', error);
-
+        GetQuotes();
     }
 }
 // tweet quote
@@ -50,8 +57,6 @@ function tweetQuote() {
 // event listeners
 newQuoteBtn.addEventListener('click', GetQuotes);
 twitterBtn.addEventListener('click', tweetQuote);
-
-
 
 // on load
 GetQuotes();
